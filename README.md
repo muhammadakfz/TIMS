@@ -38,3 +38,41 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+
+## Customization
+
+You can tailor the dashboard by editing these spots:
+
+- **Background & layout** – adjust Tailwind classes on the root container in `pages/index.tsx`.
+- **Card styling** – tweak opacity, blur, and borders of the temperature card.
+- **Firebase paths** – update the `ref(database, 'sensor/temperature')` path if your data lives elsewhere.
+- **Icons & colors** – swap the Fire icon or modify Tailwind colors.
+- **Fonts** – change the `Inter` font import or customize Tailwind’s font settings.
+
+## AI Insight Setup
+
+The `/api/chat` route now summarizes the room condition automatically using Google Gemini Flash.
+
+1. Create `.env.local` with:
+
+	```bash
+	GEMINI_API_KEY=your-api-key
+	# Optional override (defaults to gemini-2.5-flash)
+	GEMINI_MODEL=gemini-2.5-flash
+	```
+
+2. Restart the dev server after adjusting environment variables.
+3. Open the dashboard—once the TIMS sensor sends a new temperature value, the AI card will explain the comfort level and suggested action. Jika Gemini tidak mengembalikan teks, endpoint mencoba model cadangan `gemini-1.5-flash` dan bila masih kosong, sistem otomatis memakai ringkasan lokal berbasis aturan sehingga pengguna tetap mendapat rekomendasi.
+
+### Optional: manual API test
+
+You can probe the endpoint directly:
+
+```bash
+curl -X POST http://localhost:3000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"temperature": 29.7}'
+```
+
+The response includes either a `response` string (the explanation) or an `error` when Gemini blocks the output.
+
